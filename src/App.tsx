@@ -344,6 +344,12 @@ const linkClickEffect = {
   transition: { type: "spring", stiffness: 500, damping: 15 }
 };
 
+const pressEffect = {
+  whileHover: { scale: 1.02, y: -2 },
+  whileTap: { scale: 0.98, y: 0 },
+  transition: { type: "spring", stiffness: 400, damping: 17 }
+};
+
 // --- Components ---
 
 const Navbar = ({ lang, setLang, t }) => {
@@ -438,6 +444,25 @@ const BackgroundEffects = () => {
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-purple-200/20 rounded-full blur-[160px]"
       />
+
+      {/* Floating Neural Nodes (Parallax Particles) */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute bg-accent-purple/20 rounded-full"
+          style={{
+            top: `${15 + i * 15}%`,
+            left: `${10 + (i * 17) % 80}%`,
+            y: useTransform(scrollY, [0, 5000], [0, -(300 + i * 200)]),
+            x: i % 2 === 0 ? 20 : -20,
+            rotate: i * 45,
+            width: i % 2 === 0 ? '4px' : '2px',
+            height: i % 2 === 0 ? '4px' : '2px',
+            boxShadow: '0 0 10px rgba(124,58,237,0.3)'
+          }}
+        />
+      ))}
+
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#FDFDFD_100%)]" />
     </div>
   );
@@ -511,8 +536,8 @@ const Hero = ({ t }) => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
+          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative perspective-1000 hidden lg:block"
         >
@@ -523,13 +548,42 @@ const Hero = ({ t }) => {
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 border-[1px] border-dashed border-slate-200 rounded-full"
               />
+              <motion.div 
+                animate={{ rotate: -360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-[-40px] border-[1px] border-dashed border-slate-100 rounded-full"
+              />
+              
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div 
+                  animate={{ 
+                    scale: [1, 1.05, 1],
+                    rotateY: [0, 10, 0],
+                    rotateX: [0, -5, 0]
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   className="w-72 h-72 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[4rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] flex items-center justify-center relative overflow-hidden border border-white/10"
                 >
                   <Brain className="w-32 h-32 text-accent-purple drop-shadow-[0_0_20px_rgba(124,58,237,0.5)] z-10" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.2)_0%,transparent_70%)]" />
                 </motion.div>
               </div>
+
+              {[
+                { Icon: Cpu, pos: "top-0 left-0" },
+                { Icon: Network, pos: "top-0 right-0" },
+                { Icon: ShieldCheck, pos: "bottom-0 left-0" },
+                { Icon: Zap, pos: "bottom-0 right-0" }
+              ].map((Node, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ y: [0, 15, 0] }}
+                  transition={{ duration: 4, delay: i * 0.5, repeat: Infinity }}
+                  className={`absolute ${Node.pos} w-16 h-16 bg-white rounded-2xl shadow-2xl flex items-center justify-center border border-slate-100`}
+                >
+                  <Node.Icon className="w-8 h-8 text-slate-400" />
+                </motion.div>
+              ))}
             </div>
           </div>
         </motion.div>
@@ -797,8 +851,12 @@ const EthicsSection = ({ t }) => {
 };
 
 const SummarySection = ({ t }) => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [2000, 5000], [0, -200]);
+
   return (
     <section className="py-40 px-6 relative overflow-hidden">
+      <div className="absolute inset-0 atmosphere -z-10" />
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -813,8 +871,18 @@ const SummarySection = ({ t }) => {
           <p className="text-2xl md:text-3xl text-slate-500 mb-16 font-medium leading-relaxed max-w-3xl mx-auto">
             {t.summary.desc}
           </p>
+          <div className="flex justify-center gap-6">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-3 h-3 rounded-full bg-accent-purple animate-ping" style={{ animationDelay: `${i * 0.2}s` }} />
+              ))}
+          </div>
         </motion.div>
       </div>
+
+      <motion.div 
+        style={{ y }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-accent-purple/5 rounded-full blur-[200px] -z-10" 
+      />
     </section>
   );
 };
