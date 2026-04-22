@@ -26,8 +26,7 @@ import {
   Box,
   Share2,
   Compass,
-  Terminal,
-  CpuIcon
+  Terminal
 } from 'lucide-react';
 
 // --- Translations ---
@@ -39,19 +38,24 @@ const translations = {
       badge: "Майбутнє Інтелекту / v3.0.42",
       title: "BrainFlow",
       subtitle: "AI, що розуміє вас з півслова. Ми створюємо системи, де технології працюють автономно, звільняючи ваш час для справді важливих ідей.",
-      status: "Активний потік"
+      status: "Активний потік",
+      explore: "Scroll to Explore"
     },
     concept: {
       badge: "01 / Візія",
-      title1: "Повний контроль",
-      title2: "над бізнесом",
-      desc: "BrainFlow — це розумна операційна система для ваших процесів. Вона не просто виконує команди, а розуміє суть завдань і знаходить найкращі рішення самостійно.",
-      item1: { title: "Розумний Інтелект", desc: "Система розуміє причини та наслідки, а не просто аналізує дані." },
-      item2: { title: "Мережа помічників", desc: "Група агентів, що працюють разом для досягнення вашої мети." },
-      stats: {
-        accuracy: "Когнітивна точність",
-        sync: "Синхронізовано"
-      }
+      title1: "Когнітивний",
+      title2: "Суверенітет",
+      desc: "BrainFlow 3.0 — це перша у світі ОС, що базується на каузальному ШІ та мультиагентній оркестрації. Ми не просто автоматизуємо завдання, ми створюємо автономні системи, що розуміють контекст.",
+      item1: { title: "Каузальний Інтелект", desc: "Розуміння причинно-наслідкових зв'язків замість простого аналізу патернів." },
+      item2: { title: "Мультиагентна Мережа", desc: "Рій спеціалізованих агентів, що працюють синхронно для досягнення цілі." },
+      stats_title: "System Analytics",
+      stats_status: "Synchronized",
+      stats: [
+        { label: "Neural Sync", val: 99.9 },
+        { label: "Causal Logic", val: 94.2 },
+        { label: "Agentic Flow", val: 98.7 }
+      ],
+      accuracy: "Когнітивна точність"
     },
     architecture: {
       badge: "02 / Архітектура",
@@ -59,12 +63,12 @@ const translations = {
       title2: "Системи",
       desc: "Кожен рівень працює злагоджено для повної автономності вашого бізнесу.",
       layers: [
-        { title: "Збір даних", desc: "Датчики та пристрої для збору інформації в реальному часі." },
-        { title: "Об'єднання інформації", desc: "Зведення всіх потоків даних у єдину зрозумілу картину." },
-        { title: "Пошук рішень", desc: "Визначення логіки та зв'язків у потоках інформації." },
-        { title: "Координація дій", desc: "Управління агентами для виконання складних сценаріїв." },
-        { title: "Зручне управління", desc: "Простий та адаптивний інтерфейс для оператора." },
-        { title: "Результат без затримок", desc: "Миттєве прийняття рішень та виконання дій." }
+        { title: "Збір даних", desc: "Датчики та пристрої для збору інформації в реальному часі.", tag: "Input" },
+        { title: "Об'єднання інформації", desc: "Зведення всіх потоків даних у єдину зрозумілу картину.", tag: "Sync" },
+        { title: "Пошук рішень", desc: "Визначення логіки та зв'язків у потоках інформації.", tag: "Logic" },
+        { title: "Координація дій", desc: "Управління агентами для виконання складних сценаріїв.", tag: "Coord" },
+        { title: "Зручне управління", desc: "Простий та адаптивний інтерфейс для оператора.", tag: "UX" },
+        { title: "Результат без затримок", desc: "Миттєве прийняття рішень та виконання дій.", tag: "Instant" }
       ]
     },
     modules: {
@@ -73,11 +77,11 @@ const translations = {
       title2: "Екосистема",
       desc: "BrainFlow 3.0 побудована з незалежних блоків, які легко масштабуються під ваші потреби.",
       list: [
-        { title: "Ядро системи", desc: "Головний інтелект, що координує всі процеси." },
-        { title: "Швидка обробка", desc: "Миттєва робота з потоками даних без затримок." },
-        { title: "Розумні помічники", desc: "Мережа агентів для паралельного виконання завдань." },
-        { title: "Логічний зв'язок", desc: "Модуль для моделювання та прийняття рішень." },
-        { title: "Візуалізація", desc: "Інтерфейс для перегляду стану складних систем." }
+        { title: "Neuro-Core", desc: "Центральний інтелект системи, що координує всі процеси.", tag: "Intelligence" },
+        { title: "Flow-Engine", desc: "Двигун обробки потокових даних з нульовою затримкою.", tag: "Speed" },
+        { title: "Agent-Swarm", desc: "Розподілена мережа агентів для паралельного виконання завдань.", tag: "Scale" },
+        { title: "Causal-Link", desc: "Модуль логічного виводу та каузального моделювання.", tag: "Logic" },
+        { title: "Vision-Portal", desc: "Інтерфейс візуалізації складних системних станів.", tag: "UX" }
       ]
     },
     timeline: {
@@ -88,7 +92,7 @@ const translations = {
       steps: [
         { title: "Вхідні дані", desc: "Збір з джерел." },
         { title: "Обробка", desc: "Фільтрація потоку." },
-        { title: "Аналіз", desc: "Пошук рішення." },
+        { title: "Аналіз", desc: "Поиск решения." },
         { title: "Результат", desc: "Автономна дія." }
       ]
     },
@@ -98,9 +102,9 @@ const translations = {
       title2: "Розвитку",
       desc: "Наш план створення повноцінного корпоративного інтелекту.",
       steps: [
-        { date: "Q2 2026", title: "Тестування", desc: "Запуск основного ядра в закритому середовищі." },
-        { date: "Q4 2026", title: "Бета-реліз", desc: "Перші впровадження у великих компаніях." },
-        { date: "Q1 2027", title: "Глобальний запуск", desc: "Відкриття системи для всіх розробників." }
+        { date: "Q2 2026", title: "Тестування", desc: "Запуск основного ядра в закритому середовищі.", tag: "Alpha" },
+        { date: "Q4 2026", title: "Бета-реліз", desc: "Інтеграція з першими корпоративними партнерами.", tag: "Beta" },
+        { date: "Q1 2027", title: "Глобальний запуск", desc: "Відкриття системи для всіх розробників.", tag: "Global" }
       ]
     },
     ethics: {
@@ -117,7 +121,7 @@ const translations = {
       badge: "07 / Підсумок",
       title1: "Майбутнє — це",
       title2: "BrainFlow",
-      desc: "Ми створюємо нову форму взаємодії з цифровим світом."
+      desc: "Ми не просто будуємо софт. Ми створюємо нову форму існування інтелекту в цифровому просторі."
     },
     footer: {
       links: [
@@ -125,7 +129,7 @@ const translations = {
         { label: 'Архітектура', id: 'architecture' },
         { label: 'Етика', id: 'ethics' }
       ],
-      rights: "© 2026 BrainFlow. Всі права захищені."
+      rights: "© 2026 BrainFlow Concept. Всі права захищені."
     }
   },
   ru: {
@@ -134,19 +138,24 @@ const translations = {
       badge: "Будущее Интеллекта / v3.0.42",
       title: "BrainFlow",
       subtitle: "ИИ, который понимает вас с полуслова. Мы создаем системы, где технологии работают автономно, освобождая ваше время для действительно важных идей.",
-      status: "Активный поток"
+      status: "Активный поток",
+      explore: "Scroll to Explore"
     },
     concept: {
       badge: "01 / Видение",
-      title1: "Полный контроль",
-      title2: "над бизнесом",
-      desc: "BrainFlow — это умная операционная система для ваших процессов. Она не просто исполняет команды, а понимает суть задач и находит лучшие решения самостоятельно.",
-      item1: { title: "Умный Интеллект", desc: "Система понимает причины и следствия, а не просто анализирует данные." },
-      item2: { title: "Сеть помощников", desc: "Группа агентов, работающих вместе для достижения вашей цели." },
-      stats: {
-        accuracy: "Когнитивная точность",
-        sync: "Синхронизировано"
-      }
+      title1: "Когнитивный",
+      title2: "Суверенитет",
+      desc: "BrainFlow 3.0 — это первая в мире ОС, основанная на каузальном ИИ и мультиагентной оркестрации. Мы не просто автоматизируем задачи, мы создаем автономные системы, понимающие контекст.",
+      item1: { title: "Каузальный Интеллект", desc: "Понимание причинно-следственных связей вместо простого анализа паттернов." },
+      item2: { title: "Мультиагентная Сеть", desc: "Рой специализированных агентов, работающих синхронно для достижения цели." },
+      stats_title: "System Analytics",
+      stats_status: "Synchronized",
+      stats: [
+        { label: "Neural Sync", val: 99.9 },
+        { label: "Causal Logic", val: 94.2 },
+        { label: "Agentic Flow", val: 98.7 }
+      ],
+      accuracy: "Когнитивная точность"
     },
     architecture: {
       badge: "02 / Архитектура",
@@ -154,25 +163,25 @@ const translations = {
       title2: "Системы",
       desc: "Каждый уровень работает слаженно для полной автономности вашего бизнеса.",
       layers: [
-        { title: "Сбор данных", desc: "Датчики и устройства для сбора информации в реальном времени." },
-        { title: "Объединение информации", desc: "Сведение всех потоков данных в единую понятную картину." },
-        { title: "Поиск решений", desc: "Определение логики и связей в потоках информации." },
-        { title: "Координация действий", desc: "Управление агентами для выполнения сложных сценариев." },
-        { title: "Удобное управление", desc: "Простой и адаптивный интерфейс для оператора." },
-        { title: "Результат без задержек", desc: "Мгновенное принятие решений и выполнение действий." }
+        { title: "Сбор данных", desc: "Датчики и устройства для сбора информации в реальном времени.", tag: "Input" },
+        { title: "Объединение информации", desc: "Сведение всех потоков данных в единую понятную картину.", tag: "Sync" },
+        { title: "Поиск решений", desc: "Определение логики и связей в потоках информации.", tag: "Logic" },
+        { title: "Координация действий", desc: "Управление агентами для выполнения сложных сценариев.", tag: "Coord" },
+        { title: "Удобное управление", desc: "Простой и адаптивный интерфейс для оператора.", tag: "UX" },
+        { title: "Результат без задержек", desc: "Мгновенное принятие решений и выполнение действий.", tag: "Instant" }
       ]
     },
     modules: {
       badge: "03 / Модули",
       title1: "Модульная",
       title2: "Экосистема",
-      desc: "BrainFlow 3.0 построена из независимых блоков, которые легко масштабируются под ваши задачи.",
+      desc: "BrainFlow 3.0 построена из независимых блоков, которые легко масштабуруются под ваши задачи.",
       list: [
-        { title: "Ядро системы", desc: "Главный интеллект, координирующий все процессы." },
-        { title: "Быстрая обработка", desc: "Мгновенная работа с потоками данных без задержек." },
-        { title: "Умные помощники", desc: "Сеть агентов для параллельного выполнения задач." },
-        { title: "Логическая связь", desc: "Модуль для моделирования и принятия решений." },
-        { title: "Визуализация", desc: "Интерфейс для просмотра состояния сложных систем." }
+        { title: "Neuro-Core", desc: "Центральный интеллект системы, координирующий все процессы.", tag: "Intelligence" },
+        { title: "Flow-Engine", desc: "Двигатель обработки потоковых данных с нулевой задержкой.", tag: "Speed" },
+        { title: "Agent-Swarm", desc: "Распределенная сеть агентов для параллельного выполнения задач.", tag: "Scale" },
+        { title: "Causal-Link", desc: "Модуль логического вывода и каузального моделирования.", tag: "Logic" },
+        { title: "Vision-Portal", desc: "Интерфейс визуализации сложных системных состояний.", tag: "UX" }
       ]
     },
     timeline: {
@@ -193,9 +202,9 @@ const translations = {
       title2: "Развития",
       desc: "Наш план создания полноценного корпоративного интеллекта.",
       steps: [
-        { date: "Q2 2026", title: "Тестирование", desc: "Запуск основного ядра в закрытой среде." },
-        { date: "Q4 2026", title: "Бета-релиз", desc: "Первые внедрения в крупных компаниях." },
-        { date: "Q1 2027", title: "Глобальный запуск", desc: "Открытие системы для всех разработчиков." }
+        { date: "Q2 2026", title: "Тестирование", desc: "Запуск основного ядра в закрытой среде.", tag: "Alpha" },
+        { date: "Q4 2026", title: "Бета-релиз", desc: "Первые внедрения в крупных компаниях.", tag: "Beta" },
+        { date: "Q1 2027", title: "Глобальный запуск", desc: "Открытие системы для всех разработчиков.", tag: "Global" }
       ]
     },
     ethics: {
@@ -204,7 +213,7 @@ const translations = {
       title2: "Этика",
       desc: "Мы строим системы, которые уважают приватность и работают на благо человечества.",
       items: [
-        { title: "Прозрачность", desc: "Каждое решение системы можно отследить и понять." },
+        { title: "Прозрачность", desc: "Каждое решение системы можно отстежить и понять." },
         { title: "Контроль", desc: "Человек всегда остается главным арбитром в критических ситуациях." }
       ]
     },
@@ -212,7 +221,7 @@ const translations = {
       badge: "07 / Итог",
       title1: "Будущее — это",
       title2: "BrainFlow",
-      desc: "Мы создаем новую форму взаимодействия с цифровым миром."
+      desc: "Мы не просто строим софт. Мы создаем новую форму существования интеллекта в цифровом пространстве."
     },
     footer: {
       links: [
@@ -220,7 +229,7 @@ const translations = {
         { label: 'Архитектура', id: 'architecture' },
         { label: 'Этика', id: 'ethics' }
       ],
-      rights: "© 2026 BrainFlow. Все права защищены."
+      rights: "© 2026 BrainFlow Concept. Все права защищены."
     }
   },
   en: {
@@ -229,19 +238,24 @@ const translations = {
       badge: "Future of Intelligence / v3.0.42",
       title: "BrainFlow",
       subtitle: "AI that understands you instantly. We create systems where technology works autonomously, freeing your time for truly important ideas.",
-      status: "Active Flow"
+      status: "Active Flow",
+      explore: "Scroll to Explore"
     },
     concept: {
       badge: "01 / Vision",
-      title1: "Complete",
-      title2: "business control",
-      desc: "BrainFlow is a smart operating system for your processes. It doesn't just follow commands but understands the essence of tasks and finds the best solutions autonomously.",
-      item1: { title: "Smart Intelligence", desc: "The system understands causes and effects, not just data analysis." },
-      item2: { title: "Agent Network", desc: "A group of agents working together to achieve your goals." },
-      stats: {
-        accuracy: "Cognitive Accuracy",
-        sync: "Synchronized"
-      }
+      title1: "Cognitive",
+      title2: "Sovereignty",
+      desc: "BrainFlow 3.0 is the world's first OS based on causal AI and multi-agent orchestration. We don't just automate tasks, we create autonomous systems that understand context.",
+      item1: { title: "Causal Intelligence", desc: "Understanding cause-and-effect relationships instead of simple pattern analysis." },
+      item2: { title: "Multi-Agent Network", desc: "A swarm of specialized agents working synchronously to achieve a goal." },
+      stats_title: "System Analytics",
+      stats_status: "Synchronized",
+      stats: [
+        { label: "Neural Sync", val: 99.9 },
+        { label: "Causal Logic", val: 94.2 },
+        { label: "Agentic Flow", val: 98.7 }
+      ],
+      accuracy: "Cognitive Accuracy"
     },
     architecture: {
       badge: "02 / Architecture",
@@ -249,12 +263,12 @@ const translations = {
       title2: "Layers",
       desc: "Each layer works in harmony to ensure full autonomy for your business.",
       layers: [
-        { title: "Data Collection", desc: "Sensors and devices for real-time information gathering." },
-        { title: "Information Sync", desc: "Merging all data streams into a single clear picture." },
-        { title: "Decision Search", desc: "Defining logic and connections in information flows." },
-        { title: "Action Coordination", desc: "Managing agents to execute complex scenarios." },
-        { title: "Easy Control", desc: "Simple and adaptive interface for the operator." },
-        { title: "Instant Result", desc: "Immediate decision-making and action execution." }
+        { title: "Data Collection", desc: "Sensors and devices for real-time information gathering.", tag: "Input" },
+        { title: "Information Sync", desc: "Merging all data streams into a single clear picture.", tag: "Sync" },
+        { title: "Decision Search", desc: "Defining logic and connections in information flows.", tag: "Logic" },
+        { title: "Action Coordination", desc: "Managing agents to execute complex scenarios.", tag: "Coord" },
+        { title: "Easy Control", desc: "Simple and adaptive interface for the operator.", tag: "UX" },
+        { title: "Instant Result", desc: "Immediate decision-making and action execution.", tag: "Instant" }
       ]
     },
     modules: {
@@ -263,11 +277,11 @@ const translations = {
       title2: "Ecosystem",
       desc: "BrainFlow 3.0 is built with independent blocks that easily scale to your needs.",
       list: [
-        { title: "System Core", desc: "The main intelligence coordinating all processes." },
-        { title: "Fast Processing", desc: "Instant work with data streams with zero delay." },
-        { title: "Smart Helpers", desc: "A network of agents for parallel task execution." },
-        { title: "Logical Link", desc: "Module for modeling and decision making." },
-        { title: "Visualization", desc: "Interface for viewing the state of complex systems." }
+        { title: "Neuro-Core", desc: "The main intelligence coordinating all processes.", tag: "Intelligence" },
+        { title: "Flow-Engine", desc: "A processing engine with zero latency.", tag: "Speed" },
+        { title: "Agent-Swarm", desc: "Distributed network of agents for parallel execution.", tag: "Scale" },
+        { title: "Causal-Link", desc: "Module for logical inference and causal modeling.", tag: "Logic" },
+        { title: "Vision-Portal", desc: "Interface for visualization of complex system states.", tag: "UX" }
       ]
     },
     timeline: {
@@ -288,9 +302,9 @@ const translations = {
       title2: "Path",
       desc: "Our plan to create a full-scale corporate intelligence.",
       steps: [
-        { date: "Q2 2026", title: "Testing", desc: "Launching the core engine in a closed environment." },
-        { date: "Q4 2026", title: "Beta Release", desc: "First implementations in large companies." },
-        { date: "Q1 2027", title: "Global Launch", desc: "Opening the system for all developers." }
+        { date: "Q2 2026", title: "Testing", desc: "Launching the core engine in a closed environment.", tag: "Alpha" },
+        { date: "Q4 2026", title: "Beta Release", desc: "First implementations in large companies.", tag: "Beta" },
+        { date: "Q1 2027", title: "Global Launch", desc: "Opening the system for all developers.", tag: "Global" }
       ]
     },
     ethics: {
@@ -307,7 +321,7 @@ const translations = {
       badge: "07 / Summary",
       title1: "The Future is",
       title2: "BrainFlow",
-      desc: "We are creating a new way to interact with the digital world."
+      desc: "We are not just building software. We are creating a new form of intelligence existence in the digital space."
     },
     footer: {
       links: [
@@ -315,7 +329,7 @@ const translations = {
         { label: 'Architecture', id: 'architecture' },
         { label: 'Ethics', id: 'ethics' }
       ],
-      rights: "© 2026 BrainFlow. All rights reserved."
+      rights: "© 2026 BrainFlow Concept. All rights reserved."
     }
   }
 };
@@ -588,6 +602,20 @@ const Hero = ({ t }) => {
           </div>
         </motion.div>
       </div>
+
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+      >
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">{t.hero.explore}</span>
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="w-[1px] h-12 bg-gradient-to-b from-accent-purple to-transparent"
+        />
+      </motion.div>
     </section>
   );
 };
@@ -635,40 +663,37 @@ const ConceptSection = ({ t }) => {
                className="glass-card p-12 rounded-[4rem] relative overflow-hidden border border-white/50"
              >
                 <div className="relative z-10 space-y-8">
-                   <div className="flex items-center justify-between border-b border-slate-100 pb-8">
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Analytics</div>
-                      <div className="flex items-center gap-2">
-                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">{t.concept.stats.sync}</span>
-                      </div>
-                   </div>
-                   <div className="space-y-6">
-                      {[
-                        { label: "Neural Sync", val: 99.9 },
-                        { label: "Agent Flow", val: 98.7 }
-                      ].map((stat, i) => (
-                        <div key={i} className="space-y-2">
-                           <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                              <span>{stat.label}</span>
-                              <span>{stat.val}%</span>
-                           </div>
-                           <div className="h-2 bg-slate-50 rounded-full overflow-hidden relative">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                whileInView={{ width: `${stat.val}%` }}
-                                transition={{ duration: 2 }}
-                                className="absolute inset-0 bg-accent-purple"
-                              />
-                           </div>
-                        </div>
-                      ))}
-                   </div>
-                   <div className="pt-8 flex items-center justify-between">
-                      <div>
-                        <div className="text-4xl font-display font-bold text-slate-900 mb-1 tracking-tighter">99.9%</div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.concept.stats.accuracy}</div>
-                      </div>
-                   </div>
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-8">
+                       <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t.concept.stats_title}</div>
+                       <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                          <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">{t.concept.stats_status}</span>
+                       </div>
+                    </div>
+                    <div className="space-y-6">
+                       {t.concept.stats.map((stat, i) => (
+                         <div key={i} className="space-y-2">
+                            <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                               <span>{stat.label}</span>
+                               <span>{stat.val}%</span>
+                            </div>
+                            <div className="h-2 bg-slate-50 rounded-full overflow-hidden relative">
+                               <motion.div 
+                                 initial={{ width: 0 }}
+                                 whileInView={{ width: `${stat.val}%` }}
+                                 transition={{ duration: 2 }}
+                                 className="absolute inset-0 bg-accent-purple"
+                               />
+                            </div>
+                         </div>
+                       ))}
+                    </div>
+                    <div className="pt-8 flex items-center justify-between">
+                       <div>
+                         <div className="text-4xl font-display font-bold text-slate-900 mb-1 tracking-tighter">99.9%</div>
+                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.concept.accuracy}</div>
+                       </div>
+                    </div>
                 </div>
              </motion.div>
           </div>
@@ -701,8 +726,12 @@ const ArchitectureSection = ({ t }) => {
               className="glass-card p-12 rounded-[3rem] group transition-all duration-500 relative overflow-hidden border border-white/50"
             >
               <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-8 group-hover:bg-accent-purple group-hover:text-white transition-all duration-500 shadow-sm">
-                {icons[i] && <div className="w-8 h-8">{icons[i]({})}</div>}
+                {icons[i] && (() => {
+                  const Icon = icons[i];
+                  return <Icon className="w-8 h-8" />;
+                })()}
               </div>
+              <div className="absolute top-12 right-12 text-[10px] font-black text-slate-300 uppercase tracking-widest group-hover:text-accent-purple/30 transition-colors">{layer.tag}</div>
               <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-accent-purple transition-colors">{layer.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{layer.desc}</p>
             </div>
@@ -739,7 +768,13 @@ const ModulesSection = ({ t }) => {
               className="p-10 rounded-[3rem] border border-white/10 transition-all duration-500 group hover:bg-white/5"
             >
               <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-accent-lilac group-hover:text-slate-900 transition-all duration-500 shadow-lg">
-                {icons[i] && <div className="w-6 h-6">{icons[i]({})}</div>}
+                {icons[i] && (() => {
+                  const Icon = icons[i];
+                  return <Icon className="w-6 h-6" />;
+                })()}
+              </div>
+              <div className="absolute top-10 right-10 text-[8px] font-black text-white/20 uppercase tracking-widest border border-white/10 px-2 py-1 rounded-md group-hover:text-accent-lilac group-hover:border-accent-lilac/30 transition-all">
+                {module.tag}
               </div>
               <h3 className="text-xl font-display font-bold mb-4 uppercase tracking-tight group-hover:text-accent-lilac transition-colors">{module.title}</h3>
               <p className="text-sm text-slate-400 font-medium leading-relaxed">{module.desc}</p>
@@ -752,7 +787,7 @@ const ModulesSection = ({ t }) => {
 };
 
 const TimelineSection = ({ t }) => {
-  const icons = [Fingerprint, CpuIcon, Terminal, Zap];
+  const icons = [Fingerprint, Cpu, Terminal, Zap];
   return (
     <section className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto text-center mb-32">
@@ -767,7 +802,10 @@ const TimelineSection = ({ t }) => {
           {t.timeline.steps.map((step, i) => (
             <div key={i} className="flex flex-col items-center text-center">
               <div className="w-20 h-20 rounded-full bg-white border-4 border-slate-50 flex items-center justify-center mb-8 shadow-xl">
-                {icons[i] && <div className="w-8 h-8 text-accent-purple">{icons[i]({})}</div>}
+                {icons[i] && (() => {
+                  const Icon = icons[i];
+                  return <Icon className="w-8 h-8 text-accent-purple" />;
+                })()}
               </div>
               <h3 className="text-xl font-display font-bold mb-4 text-slate-900 uppercase tracking-tight">{step.title}</h3>
               <p className="text-sm text-slate-500 font-medium leading-relaxed">{step.desc}</p>
@@ -794,6 +832,9 @@ const RoadmapSection = ({ t }) => {
             <div key={i} className="glass-card p-12 rounded-[3rem] relative group border border-white/50">
               <div className="flex justify-between items-start mb-8">
                  <div className="text-accent-purple font-black text-[10px] uppercase tracking-[0.3em]">{step.date}</div>
+                 <div className="px-3 py-1 rounded-full bg-accent-purple/5 text-accent-purple text-[8px] font-black uppercase tracking-widest border border-accent-purple/10">
+                   {step.tag}
+                 </div>
               </div>
               <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-accent-purple transition-colors uppercase tracking-tight">{step.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{step.desc}</p>
