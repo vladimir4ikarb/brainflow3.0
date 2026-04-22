@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView } from 'motion/react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { 
   Brain, 
   Cpu, 
@@ -21,17 +21,304 @@ import {
   Sparkles,
   Activity,
   Layers,
-  Globe,
-  Compass,
   Database,
   Eye,
   Box,
   Share2,
-  Lock,
-  ZapOff,
+  Compass,
   Terminal,
   CpuIcon
 } from 'lucide-react';
+
+// --- Translations ---
+
+const translations = {
+  ua: {
+    nav: ['Концепція', 'Архітектура', 'Модулі', 'Дорожня карта'],
+    hero: {
+      badge: "Майбутнє Інтелекту / v3.0.42",
+      title: "BrainFlow",
+      subtitle: "AI, що розуміє вас з півслова. Ми створюємо системи, де технології працюють автономно, звільняючи ваш час для справді важливих ідей.",
+      status: "Активний потік"
+    },
+    concept: {
+      badge: "01 / Візія",
+      title1: "Повний контроль",
+      title2: "над бізнесом",
+      desc: "BrainFlow — це розумна операційна система для ваших процесів. Вона не просто виконує команди, а розуміє суть завдань і знаходить найкращі рішення самостійно.",
+      item1: { title: "Розумний Інтелект", desc: "Система розуміє причини та наслідки, а не просто аналізує дані." },
+      item2: { title: "Мережа помічників", desc: "Група агентів, що працюють разом для досягнення вашої мети." },
+      stats: {
+        accuracy: "Когнітивна точність",
+        sync: "Синхронізовано"
+      }
+    },
+    architecture: {
+      badge: "02 / Архітектура",
+      title1: "6 Рівнів",
+      title2: "Системи",
+      desc: "Кожен рівень працює злагоджено для повної автономності вашого бізнесу.",
+      layers: [
+        { title: "Збір даних", desc: "Датчики та пристрої для збору інформації в реальному часі." },
+        { title: "Об'єднання інформації", desc: "Зведення всіх потоків даних у єдину зрозумілу картину." },
+        { title: "Пошук рішень", desc: "Визначення логіки та зв'язків у потоках інформації." },
+        { title: "Координація дій", desc: "Управління агентами для виконання складних сценаріїв." },
+        { title: "Зручне управління", desc: "Простий та адаптивний інтерфейс для оператора." },
+        { title: "Результат без затримок", desc: "Миттєве прийняття рішень та виконання дій." }
+      ]
+    },
+    modules: {
+      badge: "03 / Модулі",
+      title1: "Модульна",
+      title2: "Екосистема",
+      desc: "BrainFlow 3.0 побудована з незалежних блоків, які легко масштабуються під ваші потреби.",
+      list: [
+        { title: "Ядро системи", desc: "Головний інтелект, що координує всі процеси." },
+        { title: "Швидка обробка", desc: "Миттєва робота з потоками даних без затримок." },
+        { title: "Розумні помічники", desc: "Мережа агентів для паралельного виконання завдань." },
+        { title: "Логічний зв'язок", desc: "Модуль для моделювання та прийняття рішень." },
+        { title: "Візуалізація", desc: "Інтерфейс для перегляду стану складних систем." }
+      ]
+    },
+    timeline: {
+      badge: "04 / Процес",
+      title1: "Життєвий Цикл",
+      title2: "Даних",
+      desc: "Від отримання сигналу до результату за мілісекунди.",
+      steps: [
+        { title: "Вхідні дані", desc: "Збір з джерел." },
+        { title: "Обробка", desc: "Фільтрація потоку." },
+        { title: "Аналіз", desc: "Пошук рішення." },
+        { title: "Результат", desc: "Автономна дія." }
+      ]
+    },
+    roadmap: {
+      badge: "05 / Дорожня Карта",
+      title1: "Шлях",
+      title2: "Розвитку",
+      desc: "Наш план створення повноцінного корпоративного інтелекту.",
+      steps: [
+        { date: "Q2 2026", title: "Тестування", desc: "Запуск основного ядра в закритому середовищі." },
+        { date: "Q4 2026", title: "Бета-реліз", desc: "Перші впровадження у великих компаніях." },
+        { date: "Q1 2027", title: "Глобальний запуск", desc: "Відкриття системи для всіх розробників." }
+      ]
+    },
+    ethics: {
+      badge: "06 / Етика",
+      title1: "Безпека та",
+      title2: "Етика",
+      desc: "Ми будуємо системи, які поважають приватність та працюють на користь людства.",
+      items: [
+        { title: "Прозорість", desc: "Кожне рішення системи можна відстежити та зрозуміти." },
+        { title: "Контроль", desc: "Людина завжди залишається головним арбітром у критичних ситуаціях." }
+      ]
+    },
+    summary: {
+      badge: "07 / Підсумок",
+      title1: "Майбутнє — це",
+      title2: "BrainFlow",
+      desc: "Ми створюємо нову форму взаємодії з цифровим світом."
+    },
+    footer: {
+      links: [
+        { label: 'Концепція', id: 'concept' },
+        { label: 'Архітектура', id: 'architecture' },
+        { label: 'Етика', id: 'ethics' }
+      ],
+      rights: "© 2026 BrainFlow. Всі права захищені."
+    }
+  },
+  ru: {
+    nav: ['Концепция', 'Архитектура', 'Модули', 'Дорожная карта'],
+    hero: {
+      badge: "Будущее Интеллекта / v3.0.42",
+      title: "BrainFlow",
+      subtitle: "ИИ, который понимает вас с полуслова. Мы создаем системы, где технологии работают автономно, освобождая ваше время для действительно важных идей.",
+      status: "Активный поток"
+    },
+    concept: {
+      badge: "01 / Видение",
+      title1: "Полный контроль",
+      title2: "над бизнесом",
+      desc: "BrainFlow — это умная операционная система для ваших процессов. Она не просто исполняет команды, а понимает суть задач и находит лучшие решения самостоятельно.",
+      item1: { title: "Умный Интеллект", desc: "Система понимает причины и следствия, а не просто анализирует данные." },
+      item2: { title: "Сеть помощников", desc: "Группа агентов, работающих вместе для достижения вашей цели." },
+      stats: {
+        accuracy: "Когнитивная точность",
+        sync: "Синхронизировано"
+      }
+    },
+    architecture: {
+      badge: "02 / Архитектура",
+      title1: "6 Уровней",
+      title2: "Системы",
+      desc: "Каждый уровень работает слаженно для полной автономности вашего бизнеса.",
+      layers: [
+        { title: "Сбор данных", desc: "Датчики и устройства для сбора информации в реальном времени." },
+        { title: "Объединение информации", desc: "Сведение всех потоков данных в единую понятную картину." },
+        { title: "Поиск решений", desc: "Определение логики и связей в потоках информации." },
+        { title: "Координация действий", desc: "Управление агентами для выполнения сложных сценариев." },
+        { title: "Удобное управление", desc: "Простой и адаптивный интерфейс для оператора." },
+        { title: "Результат без задержек", desc: "Мгновенное принятие решений и выполнение действий." }
+      ]
+    },
+    modules: {
+      badge: "03 / Модули",
+      title1: "Модульная",
+      title2: "Экосистема",
+      desc: "BrainFlow 3.0 построена из независимых блоков, которые легко масштабируются под ваши задачи.",
+      list: [
+        { title: "Ядро системы", desc: "Главный интеллект, координирующий все процессы." },
+        { title: "Быстрая обработка", desc: "Мгновенная работа с потоками данных без задержек." },
+        { title: "Умные помощники", desc: "Сеть агентов для параллельного выполнения задач." },
+        { title: "Логическая связь", desc: "Модуль для моделирования и принятия решений." },
+        { title: "Визуализация", desc: "Интерфейс для просмотра состояния сложных систем." }
+      ]
+    },
+    timeline: {
+      badge: "04 / Процесс",
+      title1: "Жизненный Цикл",
+      title2: "Данных",
+      desc: "От получения сигнала до результата за миллисекунды.",
+      steps: [
+        { title: "Входные данные", desc: "Сбор из источников." },
+        { title: "Обработка", desc: "Фильтрация потока." },
+        { title: "Анализ", desc: "Поиск решения." },
+        { title: "Результат", desc: "Автономное действие." }
+      ]
+    },
+    roadmap: {
+      badge: "05 / Дорожная Карта",
+      title1: "Путь",
+      title2: "Развития",
+      desc: "Наш план создания полноценного корпоративного интеллекта.",
+      steps: [
+        { date: "Q2 2026", title: "Тестирование", desc: "Запуск основного ядра в закрытой среде." },
+        { date: "Q4 2026", title: "Бета-релиз", desc: "Первые внедрения в крупных компаниях." },
+        { date: "Q1 2027", title: "Глобальный запуск", desc: "Открытие системы для всех разработчиков." }
+      ]
+    },
+    ethics: {
+      badge: "06 / Этика",
+      title1: "Безопасность и",
+      title2: "Этика",
+      desc: "Мы строим системы, которые уважают приватность и работают на благо человечества.",
+      items: [
+        { title: "Прозрачность", desc: "Каждое решение системы можно отследить и понять." },
+        { title: "Контроль", desc: "Человек всегда остается главным арбитром в критических ситуациях." }
+      ]
+    },
+    summary: {
+      badge: "07 / Итог",
+      title1: "Будущее — это",
+      title2: "BrainFlow",
+      desc: "Мы создаем новую форму взаимодействия с цифровым миром."
+    },
+    footer: {
+      links: [
+        { label: 'Концепция', id: 'concept' },
+        { label: 'Архитектура', id: 'architecture' },
+        { label: 'Этика', id: 'ethics' }
+      ],
+      rights: "© 2026 BrainFlow. Все права защищены."
+    }
+  },
+  en: {
+    nav: ['Concept', 'Architecture', 'Modules', 'Roadmap'],
+    hero: {
+      badge: "Future of Intelligence / v3.0.42",
+      title: "BrainFlow",
+      subtitle: "AI that understands you instantly. We create systems where technology works autonomously, freeing your time for truly important ideas.",
+      status: "Active Flow"
+    },
+    concept: {
+      badge: "01 / Vision",
+      title1: "Complete",
+      title2: "business control",
+      desc: "BrainFlow is a smart operating system for your processes. It doesn't just follow commands but understands the essence of tasks and finds the best solutions autonomously.",
+      item1: { title: "Smart Intelligence", desc: "The system understands causes and effects, not just data analysis." },
+      item2: { title: "Agent Network", desc: "A group of agents working together to achieve your goals." },
+      stats: {
+        accuracy: "Cognitive Accuracy",
+        sync: "Synchronized"
+      }
+    },
+    architecture: {
+      badge: "02 / Architecture",
+      title1: "6 System",
+      title2: "Layers",
+      desc: "Each layer works in harmony to ensure full autonomy for your business.",
+      layers: [
+        { title: "Data Collection", desc: "Sensors and devices for real-time information gathering." },
+        { title: "Information Sync", desc: "Merging all data streams into a single clear picture." },
+        { title: "Decision Search", desc: "Defining logic and connections in information flows." },
+        { title: "Action Coordination", desc: "Managing agents to execute complex scenarios." },
+        { title: "Easy Control", desc: "Simple and adaptive interface for the operator." },
+        { title: "Instant Result", desc: "Immediate decision-making and action execution." }
+      ]
+    },
+    modules: {
+      badge: "03 / Modules",
+      title1: "Modular",
+      title2: "Ecosystem",
+      desc: "BrainFlow 3.0 is built with independent blocks that easily scale to your needs.",
+      list: [
+        { title: "System Core", desc: "The main intelligence coordinating all processes." },
+        { title: "Fast Processing", desc: "Instant work with data streams with zero delay." },
+        { title: "Smart Helpers", desc: "A network of agents for parallel task execution." },
+        { title: "Logical Link", desc: "Module for modeling and decision making." },
+        { title: "Visualization", desc: "Interface for viewing the state of complex systems." }
+      ]
+    },
+    timeline: {
+      badge: "04 / Process",
+      title1: "Data",
+      title2: "Life Cycle",
+      desc: "From signal acquisition to result in milliseconds.",
+      steps: [
+        { title: "Input", desc: "Collection from sources." },
+        { title: "Processing", desc: "Stream filtering." },
+        { title: "Analysis", desc: "Finding solution." },
+        { title: "Execution", desc: "Autonomous action." }
+      ]
+    },
+    roadmap: {
+      badge: "05 / Roadmap",
+      title1: "Growth",
+      title2: "Path",
+      desc: "Our plan to create a full-scale corporate intelligence.",
+      steps: [
+        { date: "Q2 2026", title: "Testing", desc: "Launching the core engine in a closed environment." },
+        { date: "Q4 2026", title: "Beta Release", desc: "First implementations in large companies." },
+        { date: "Q1 2027", title: "Global Launch", desc: "Opening the system for all developers." }
+      ]
+    },
+    ethics: {
+      badge: "06 / Ethics",
+      title1: "Safety and",
+      title2: "Ethics",
+      desc: "We build systems that respect privacy and work for the benefit of humanity.",
+      items: [
+        { title: "Transparency", desc: "Every system decision can be tracked and understood." },
+        { title: "Control", desc: "Humans always remain the primary arbiter in critical situations." }
+      ]
+    },
+    summary: {
+      badge: "07 / Summary",
+      title1: "The Future is",
+      title2: "BrainFlow",
+      desc: "We are creating a new way to interact with the digital world."
+    },
+    footer: {
+      links: [
+        { label: 'Concept', id: 'concept' },
+        { label: 'Architecture', id: 'architecture' },
+        { label: 'Ethics', id: 'ethics' }
+      ],
+      rights: "© 2026 BrainFlow. All rights reserved."
+    }
+  }
+};
 
 // --- Animation Variants ---
 
@@ -51,12 +338,6 @@ const staggerContainer = {
   }
 };
 
-const pressEffect = {
-  whileHover: { scale: 1.02, y: -5 },
-  whileTap: { scale: 0.98 },
-  transition: { type: "spring", stiffness: 400, damping: 25 }
-};
-
 const linkClickEffect = {
   whileHover: { scale: 1.05 },
   whileTap: { scale: 0.95 },
@@ -65,7 +346,7 @@ const linkClickEffect = {
 
 // --- Components ---
 
-const Navbar = () => {
+const Navbar = ({ lang, setLang, t }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -96,22 +377,35 @@ const Navbar = () => {
           <span className="font-display font-bold text-xl tracking-tight text-slate-900">BrainFlow <span className="text-accent-purple">3.0</span></span>
         </motion.div>
         
-        <div className="hidden md:flex items-center gap-12 text-sm font-semibold text-slate-600 tracking-wide">
-          {['Концепція', 'Архітектура', 'Модулі', 'Дорожня карта'].map((item) => (
+        <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600 tracking-wide">
+          {[
+            { id: 'concept', label: t.nav[0] },
+            { id: 'architecture', label: t.nav[1] },
+            { id: 'modules', label: t.nav[2] },
+            { id: 'roadmap', label: t.nav[3] }
+          ].map((item) => (
             <motion.a 
-              key={item} 
-              href={`#${item.toLowerCase().replace(' ', '-')}`} 
+              key={item.id} 
+              href={`#${item.id}`} 
               className="relative group hover:text-accent-purple transition-colors"
               {...linkClickEffect}
             >
-              {item}
+              {item.label}
               <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-accent-purple transition-all duration-500 group-hover:w-full" />
             </motion.a>
           ))}
         </div>
 
-        <div className="text-xs font-bold uppercase tracking-[0.2em] text-accent-purple/60 hidden lg:block">
-          Презентація v3.0
+        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          {['ua', 'ru', 'en'].map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`hover:text-accent-purple transition-colors ${lang === l ? 'text-accent-purple border-b-2 border-accent-purple' : ''}`}
+            >
+              {l}
+            </button>
+          ))}
         </div>
       </div>
     </motion.nav>
@@ -120,16 +414,12 @@ const Navbar = () => {
 
 const BackgroundEffects = () => {
   const { scrollY } = useScroll();
-  
-  // Parallax transforms for background blobs
   const y1 = useTransform(scrollY, [0, 5000], [0, -400]);
   const y2 = useTransform(scrollY, [0, 5000], [0, 300]);
-  const y3 = useTransform(scrollY, [0, 5000], [0, -600]);
   const rotate = useTransform(scrollY, [0, 5000], [0, 45]);
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none grid-bg">
-      {/* Large Parallax Blobs */}
       <motion.div 
         style={{ y: y1, rotate }}
         animate={{ 
@@ -148,31 +438,12 @@ const BackgroundEffects = () => {
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-purple-200/20 rounded-full blur-[160px]"
       />
-
-      {/* Floating Neural Nodes (Parallax Particles) */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute bg-accent-purple/20 rounded-full"
-          style={{
-            top: `${15 + i * 15}%`,
-            left: `${10 + (i * 17) % 80}%`,
-            y: useTransform(scrollY, [0, 5000], [0, -(300 + i * 200)]),
-            x: i % 2 === 0 ? 20 : -20,
-            rotate: i * 45,
-            width: i % 2 === 0 ? '4px' : '2px',
-            height: i % 2 === 0 ? '4px' : '2px',
-            boxShadow: '0 0 10px rgba(124,58,237,0.3)'
-          }}
-        />
-      ))}
-
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#FDFDFD_100%)]" />
     </div>
   );
 };
 
-const Hero = () => {
+const Hero = ({ t }) => {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -197,17 +468,17 @@ const Hero = () => {
             className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-[10px] font-black uppercase tracking-[0.3em] mb-10 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
-            Майбутнє Інтелекту / v3.0.42
+            {t.hero.badge}
           </motion.div>
           
           <motion.div 
-            initial={{ scale: 2, y: -100, skewX: -10, opacity: 0 }}
-            animate={{ scale: 1, y: 0, skewX: 0, opacity: 1 }}
+            initial={{ scale: 1.5, y: -50, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="mb-10"
           >
             <h1 className="text-6xl md:text-[7.5rem] font-display font-bold leading-[0.88] text-gradient tracking-tighter uppercase">
-              BrainFlow <br />
+              {t.hero.title} <br />
               <span className="text-slate-300">System 3.0</span>
             </h1>
           </motion.div>
@@ -216,18 +487,10 @@ const Hero = () => {
             variants={fadeInUp}
             className="text-xl md:text-2xl text-slate-500 mb-16 max-w-xl leading-relaxed font-medium"
           >
-            Синхронізація людського інтелекту та машинного виконання. 
-            Ми створюємо майбутнє, де технологія не просто інструмент, а продовження вашої думки.
+            {t.hero.subtitle}
           </motion.p>
 
           <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center gap-8">
-            <motion.button
-              {...pressEffect}
-              className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl hover:bg-accent-purple transition-colors flex items-center gap-3 group"
-            >
-              Ознайомитись з Whitepaper
-              <Zap className="w-4 h-4 text-accent-lilac group-hover:text-white transition-colors" />
-            </motion.button>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-slate-100 relative">
                 <Activity className="text-accent-purple w-6 h-6 z-10" />
@@ -240,7 +503,7 @@ const Hero = () => {
               <div className="flex flex-col">
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status</div>
                 <div className="text-sm font-bold text-slate-900 uppercase tracking-widest">
-                  Active Flow <span className="text-accent-purple">98%</span>
+                  {t.hero.status} <span className="text-accent-purple">98%</span>
                 </div>
               </div>
             </div>
@@ -248,96 +511,36 @@ const Hero = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
-          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative perspective-1000 hidden lg:block"
         >
           <div className="relative w-full aspect-square flex items-center justify-center">
-            {/* Visual Asset: Abstract System Core */}
             <div className="relative w-[500px] h-[500px]">
-              {/* Hardware-like radial tracks */}
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 border-[1px] border-dashed border-slate-200 rounded-full"
               />
-              <motion.div 
-                animate={{ rotate: -360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-[-40px] border-[1px] border-dashed border-slate-100 rounded-full"
-              />
-              <motion.div 
-                animate={{ rotate: 180 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-[40px] border-[1px] border-slate-200/50 rounded-full"
-              />
-              
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div 
-                  animate={{ 
-                    scale: [1, 1.05, 1],
-                    rotateY: [0, 10, 0],
-                    rotateX: [0, -5, 0]
-                  }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   className="w-72 h-72 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[4rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] flex items-center justify-center relative overflow-hidden border border-white/10"
                 >
                   <Brain className="w-32 h-32 text-accent-purple drop-shadow-[0_0_20px_rgba(124,58,237,0.5)] z-10" />
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.2)_0%,transparent_70%)]" />
-                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
-                  
-                  {/* Micro-labels on the core */}
-                  <div className="absolute top-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">Core Processor</div>
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">Neural Link v3</div>
                 </motion.div>
               </div>
-
-              {/* Orbiting Nodes */}
-              {[
-                { Icon: Cpu, delay: 0, pos: "top-0 left-0", label: "Logic" },
-                { Icon: Network, delay: 1, pos: "top-0 right-0", label: "Sync" },
-                { Icon: ShieldCheck, delay: 2, pos: "bottom-0 left-0", label: "Sec" },
-                { Icon: Zap, delay: 3, pos: "bottom-0 right-0", label: "Flow" }
-              ].map((node, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ 
-                    y: [0, -20, 0], 
-                    rotate: [0, 5, 0],
-                    x: i % 2 === 0 ? [0, 10, 0] : [0, -10, 0]
-                  }}
-                  transition={{ duration: 5, delay: node.delay, repeat: Infinity, ease: "easeInOut" }}
-                  className={`absolute ${node.pos} w-24 h-24 glass-card rounded-3xl flex flex-col items-center justify-center shadow-2xl z-20 border border-white/40`}
-                >
-                  <node.Icon className="w-10 h-10 text-accent-purple mb-2" />
-                  <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{node.label}</div>
-                </motion.div>
-              ))}
             </div>
           </div>
         </motion.div>
-      </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40">
-        <div className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Scroll to Explore</div>
-        <motion.div 
-          animate={{ height: [48, 24, 48] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-0.5 bg-gradient-to-b from-accent-purple to-transparent" 
-        />
       </div>
     </section>
   );
 };
 
-const ConceptSection = () => {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 2000], [0, 200]);
-
+const ConceptSection = ({ t }) => {
   return (
-    <section id="концепція" className="py-40 px-6 relative overflow-hidden">
-      <motion.div style={{ y }} className="absolute inset-0 atmosphere -z-10" />
+    <section id="concept" className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-32 items-center">
           <motion.div
@@ -346,31 +549,27 @@ const ConceptSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">01 / Візія</div>
+            <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">{t.concept.badge}</div>
             <h2 className="text-5xl md:text-7xl font-display font-bold mb-12 tracking-tighter leading-tight uppercase">
-              Когнітивний <br /> <span className="text-accent-purple">Суверенітет</span>
+              {t.concept.title1} <br /> <span className="text-accent-purple">{t.concept.title2}</span>
             </h2>
             <p className="text-2xl text-slate-500 mb-12 leading-relaxed font-medium">
-              BrainFlow 3.0 — це перша у світі ОС, що базується на каузальному ШІ та мультиагентній оркестрації. Ми не просто автоматизуємо завдання, ми створюємо автономні системи, що розуміють контекст.
+              {t.concept.desc}
             </p>
             <div className="space-y-8">
               {[
-                { title: "Каузальний Інтелект", desc: "Розуміння причинно-наслідкових зв'язків замість простого аналізу патернів.", icon: Workflow },
-                { title: "Мультиагентна Мережа", desc: "Рій спеціалізованих агентів, що працюють синхронно для досягнення цілі.", icon: Network }
+                { ...t.concept.item1, icon: Workflow },
+                { ...t.concept.item2, icon: Network }
               ].map((item, i) => (
-                <motion.div 
-                  key={i} 
-                  {...pressEffect}
-                  className="flex gap-6 cursor-pointer group"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-slate-100 group-hover:border-accent-purple transition-colors">
+                <div key={i} className="flex gap-6">
+                  <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-slate-100">
                     <item.icon className="text-accent-purple w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h4>
                     <p className="text-slate-500 font-medium">{item.desc}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -381,20 +580,18 @@ const ConceptSection = () => {
                viewport={{ once: true }}
                className="glass-card p-12 rounded-[4rem] relative overflow-hidden border border-white/50"
              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-purple/10 blur-3xl" />
                 <div className="relative z-10 space-y-8">
                    <div className="flex items-center justify-between border-b border-slate-100 pb-8">
                       <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Analytics</div>
                       <div className="flex items-center gap-2">
                          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Synchronized</span>
+                         <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">{t.concept.stats.sync}</span>
                       </div>
                    </div>
                    <div className="space-y-6">
                       {[
                         { label: "Neural Sync", val: 99.9 },
-                        { label: "Causal Logic", val: 94.2 },
-                        { label: "Agentic Flow", val: 98.7 }
+                        { label: "Agent Flow", val: 98.7 }
                       ].map((stat, i) => (
                         <div key={i} className="space-y-2">
                            <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -405,7 +602,7 @@ const ConceptSection = () => {
                               <motion.div 
                                 initial={{ width: 0 }}
                                 whileInView={{ width: `${stat.val}%` }}
-                                transition={{ duration: 2, delay: i * 0.2 }}
+                                transition={{ duration: 2 }}
                                 className="absolute inset-0 bg-accent-purple"
                               />
                            </div>
@@ -415,10 +612,7 @@ const ConceptSection = () => {
                    <div className="pt-8 flex items-center justify-between">
                       <div>
                         <div className="text-4xl font-display font-bold text-slate-900 mb-1 tracking-tighter">99.9%</div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Когнітивна точність</div>
-                      </div>
-                      <div className="w-16 h-16 rounded-full border border-slate-100 flex items-center justify-center">
-                         <Activity className="text-accent-purple w-6 h-6" />
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.concept.stats.accuracy}</div>
                       </div>
                    </div>
                 </div>
@@ -430,18 +624,10 @@ const ConceptSection = () => {
   );
 };
 
-const ArchitectureSection = () => {
-  const layers = [
-    { num: "01", title: "Фізичний рівень", desc: "Сенсори та обладнання для збору даних у реальному часі.", icon: Box, tag: "Hardware" },
-    { num: "02", title: "Інтеграція даних", desc: "Уніфікація гетерогенних потоків інформації в єдиний контекст.", icon: Database, tag: "Context" },
-    { num: "03", title: "Каузальний аналіз", desc: "Визначення причинно-наслідкових зв'язків у потоках даних.", icon: Workflow, tag: "Logic" },
-    { num: "04", title: "Оркестрація", desc: "Управління роєм агентів для виконання складних сценаріїв.", icon: Share2, tag: "Swarm" },
-    { num: "05", title: "Когнітивний інтерфейс", desc: "Адаптивна візуалізація та взаємодія з оператором.", icon: Eye, tag: "UX" },
-    { num: "06", title: "Автономне виконання", desc: "Замкнений цикл прийняття рішень та дій без затримок.", icon: Zap, tag: "Action" }
-  ];
-
+const ArchitectureSection = ({ t }) => {
+  const icons = [Box, Database, Workflow, Share2, Eye, Zap];
   return (
-    <section id="архітектура" className="py-40 px-6 relative overflow-hidden">
+    <section id="architecture" className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -449,32 +635,23 @@ const ArchitectureSection = () => {
           viewport={{ once: true }}
           className="text-center mb-32"
         >
-          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">02 / Архітектура</div>
-          <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">6 Рівнів <span className="text-accent-purple">Системи</span></h2>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">Кожен рівень системи працює в повній синергії для забезпечення максимальної автономності.</p>
+          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">{t.architecture.badge}</div>
+          <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">{t.architecture.title1} <span className="text-accent-purple">{t.architecture.title2}</span></h2>
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">{t.architecture.desc}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {layers.map((layer, i) => (
-            <motion.div
+          {t.architecture.layers.map((layer, i) => (
+            <div
               key={i}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: i * 0.1 }}
-              {...pressEffect}
-              className="glass-card p-12 rounded-[3rem] group transition-all duration-500 relative overflow-hidden cursor-pointer border border-white/50"
+              className="glass-card p-12 rounded-[3rem] group transition-all duration-500 relative overflow-hidden border border-white/50"
             >
-              <div className="absolute top-0 right-0 p-8 text-4xl font-display font-black text-slate-100 group-hover:text-accent-purple/10 transition-colors">
-                {layer.num}
-              </div>
               <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-8 group-hover:bg-accent-purple group-hover:text-white transition-all duration-500 shadow-sm">
-                <layer.icon className="w-8 h-8" />
+                {icons[i] && <div className="w-8 h-8">{icons[i]({})}</div>}
               </div>
-              <div className="text-[8px] font-black text-accent-purple uppercase tracking-[0.3em] mb-4">{layer.tag}</div>
               <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-accent-purple transition-colors">{layer.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{layer.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -482,18 +659,10 @@ const ArchitectureSection = () => {
   );
 };
 
-const ModulesSection = () => {
-  const modules = [
-    { title: "Neuro-Core", desc: "Центральний інтелект системи, що координує всі процеси.", icon: Brain, tag: "Intelligence" },
-    { title: "Flow-Engine", desc: "Двигун обробки потокових даних з нульовою затримкою.", icon: Zap, tag: "Speed" },
-    { title: "Agent-Swarm", desc: "Розподілена мережа агентів для паралельного виконання завдань.", icon: Network, tag: "Scale" },
-    { title: "Causal-Link", desc: "Модуль логічного виводу та каузального моделювання.", icon: Workflow, tag: "Logic" },
-    { title: "Vision-Portal", desc: "Інтерфейс візуалізації складних системних станів.", icon: Eye, tag: "UX" }
-  ];
-
+const ModulesSection = ({ t }) => {
+  const icons = [Brain, Zap, Network, Workflow, Eye];
   return (
-    <section id="модулі" className="py-40 px-6 bg-slate-900 text-white rounded-[5rem] mx-6 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,#7C3AED_0%,transparent_40%)] opacity-20" />
+    <section id="modules" className="py-40 px-6 bg-slate-900 text-white rounded-[5rem] mx-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-24 items-center mb-32">
           <motion.div
@@ -501,32 +670,26 @@ const ModulesSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <div className="text-[10px] font-black text-accent-lilac uppercase tracking-[0.4em] mb-6">03 / Модулі</div>
-            <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">Модульна <br /> <span className="text-accent-lilac">Екосистема</span></h2>
+            <div className="text-[10px] font-black text-accent-lilac uppercase tracking-[0.4em] mb-6">{t.modules.badge}</div>
+            <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">{t.modules.title1} <br /> <span className="text-accent-lilac">{t.modules.title2}</span></h2>
             <p className="text-xl text-slate-400 font-medium leading-relaxed">
-              BrainFlow 3.0 побудована на базі незалежних модулів, що можуть масштабуватися під будь-які потреби підприємства.
+              {t.modules.desc}
             </p>
           </motion.div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {modules.map((module, i) => (
-            <motion.div
+          {t.modules.list.map((module, i) => (
+            <div
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              {...pressEffect}
-              className="p-10 rounded-[3rem] border border-white/10 transition-all duration-500 group cursor-pointer hover:bg-white/5"
+              className="p-10 rounded-[3rem] border border-white/10 transition-all duration-500 group hover:bg-white/5"
             >
               <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-accent-lilac group-hover:text-slate-900 transition-all duration-500 shadow-lg">
-                <module.icon className="w-6 h-6" />
+                {icons[i] && <div className="w-6 h-6">{icons[i]({})}</div>}
               </div>
-              <div className="text-[8px] font-black text-accent-lilac uppercase tracking-[0.3em] mb-4">{module.tag}</div>
               <h3 className="text-xl font-display font-bold mb-4 uppercase tracking-tight group-hover:text-accent-lilac transition-colors">{module.title}</h3>
-              <p className="text-sm text-slate-400 font-medium leading-relaxed group-hover:text-slate-300 transition-colors">{module.desc}</p>
-            </motion.div>
+              <p className="text-sm text-slate-400 font-medium leading-relaxed">{module.desc}</p>
+            </div>
           ))}
         </div>
       </div>
@@ -534,39 +697,27 @@ const ModulesSection = () => {
   );
 };
 
-const TimelineSection = () => {
+const TimelineSection = ({ t }) => {
+  const icons = [Fingerprint, CpuIcon, Terminal, Zap];
   return (
     <section className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto text-center mb-32">
-        <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">04 / Процес</div>
-        <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">Життєвий Цикл <span className="text-accent-purple">Даних</span></h2>
-        <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">Від сирого сигналу до автономної дії за мілісекунди.</p>
+        <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">{t.timeline.badge}</div>
+        <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">{t.timeline.title1} <span className="text-accent-purple">{t.timeline.title2}</span></h2>
+        <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">{t.timeline.desc}</p>
       </div>
 
       <div className="max-w-5xl mx-auto relative">
         <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 -translate-y-1/2 hidden lg:block" />
         <div className="grid lg:grid-cols-4 gap-12 relative z-10">
-          {[
-            { title: "Сенсорний Вхід", desc: "Збір даних з фізичних джерел.", icon: Fingerprint },
-            { title: "Обробка", desc: "Фільтрація та нормалізація потоку.", icon: CpuIcon },
-            { title: "Аналіз", desc: "Каузальне моделювання ситуації.", icon: Terminal },
-            { title: "Виконання", desc: "Автономна дія в системі.", icon: Zap }
-          ].map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 }}
-              {...pressEffect}
-              className="flex flex-col items-center text-center group cursor-pointer"
-            >
-              <div className="w-20 h-20 rounded-full bg-white border-4 border-slate-50 flex items-center justify-center mb-8 shadow-xl group-hover:border-accent-purple transition-all duration-500 z-10">
-                <step.icon className="w-8 h-8 text-accent-purple" />
+          {t.timeline.steps.map((step, i) => (
+            <div key={i} className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 rounded-full bg-white border-4 border-slate-50 flex items-center justify-center mb-8 shadow-xl">
+                {icons[i] && <div className="w-8 h-8 text-accent-purple">{icons[i]({})}</div>}
               </div>
               <h3 className="text-xl font-display font-bold mb-4 text-slate-900 uppercase tracking-tight">{step.title}</h3>
               <p className="text-sm text-slate-500 font-medium leading-relaxed">{step.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -574,43 +725,28 @@ const TimelineSection = () => {
   );
 };
 
-const RoadmapSection = () => {
-  const steps = [
-    { date: "Q2 2026", title: "Альфа-тестування", desc: "Запуск ядра Neuro-Core в закритому середовищі.", tag: "Alpha" },
-    { date: "Q4 2026", title: "Бета-реліз", desc: "Інтеграція з першими корпоративними партнерами.", tag: "Beta" },
-    { date: "Q1 2027", title: "Глобальна Екосистема", desc: "Відкриття API для розробників та масштабування.", tag: "Global" }
-  ];
-
+const RoadmapSection = ({ t }) => {
   return (
-    <section id="дорожня-карта" className="py-40 px-6 relative overflow-hidden">
+    <section id="roadmap" className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-32">
-          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">05 / Дорожня Карта</div>
-          <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">Шлях <span className="text-accent-purple">Розвитку</span></h2>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">Наш шлях до створення повноцінного корпоративного інтелекту.</p>
+          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">{t.roadmap.badge}</div>
+          <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 tracking-tighter uppercase">{t.roadmap.title1} <span className="text-accent-purple">{t.roadmap.title2}</span></h2>
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">{t.roadmap.desc}</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-12">
-          {steps.map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 }}
-              {...pressEffect}
-              className="glass-card p-12 rounded-[3rem] relative group cursor-pointer border border-white/50"
-            >
+          {t.roadmap.steps.map((step, i) => (
+            <div key={i} className="glass-card p-12 rounded-[3rem] relative group border border-white/50">
               <div className="flex justify-between items-start mb-8">
                  <div className="text-accent-purple font-black text-[10px] uppercase tracking-[0.3em]">{step.date}</div>
-                 <div className="px-3 py-1 rounded-full bg-slate-50 text-[8px] font-black text-slate-400 uppercase tracking-widest">{step.tag}</div>
               </div>
               <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-accent-purple transition-colors uppercase tracking-tight">{step.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{step.desc}</p>
-              <div className="absolute top-12 right-12 opacity-5 group-hover:opacity-20 transition-opacity">
+              <div className="absolute top-12 right-12 opacity-5">
                 <Compass className="w-12 h-12" />
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -618,13 +754,51 @@ const RoadmapSection = () => {
   );
 };
 
-const SummarySection = () => {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [2000, 5000], [0, -200]);
+const EthicsSection = ({ t }) => {
+  return (
+    <section id="ethics" className="py-40 px-6 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-32 items-center">
+          <div className="order-2 lg:order-1">
+             <div className="glass-card p-12 rounded-[4rem] relative overflow-hidden border border-white/50">
+                <div className="space-y-8">
+                   {t.ethics.items.map((item, i) => (
+                     <div key={i} className="flex gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center border border-slate-100">
+                           <ShieldCheck className="text-accent-purple w-6 h-6" />
+                        </div>
+                        <div>
+                           <h4 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h4>
+                           <p className="text-slate-500 font-medium">{item.desc}</p>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+             </div>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="order-1 lg:order-2"
+          >
+            <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-6">{t.ethics.badge}</div>
+            <h2 className="text-5xl md:text-7xl font-display font-bold mb-12 tracking-tighter leading-tight uppercase">
+              {t.ethics.title1} <br /> <span className="text-accent-purple">{t.ethics.title2}</span>
+            </h2>
+            <p className="text-2xl text-slate-500 leading-relaxed font-medium">
+              {t.ethics.desc}
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
+const SummarySection = ({ t }) => {
   return (
     <section className="py-40 px-6 relative overflow-hidden">
-      <div className="absolute inset-0 atmosphere -z-10" />
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -632,31 +806,20 @@ const SummarySection = () => {
           viewport={{ once: true }}
           transition={{ duration: 1 }}
         >
-          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-12">06 / Підсумок</div>
+          <div className="text-[10px] font-black text-accent-purple uppercase tracking-[0.4em] mb-12">{t.summary.badge}</div>
           <h2 className="text-6xl md:text-[10rem] font-display font-bold mb-12 tracking-tighter leading-[0.85] uppercase">
-            Майбутнє — це <br /> <span className="text-accent-purple">BrainFlow</span>
+            {t.summary.title1} <br /> <span className="text-accent-purple">{t.summary.title2}</span>
           </h2>
           <p className="text-2xl md:text-3xl text-slate-500 mb-16 font-medium leading-relaxed max-w-3xl mx-auto">
-            Ми не просто будуємо софт. Ми створюємо нову форму існування інтелекту в цифровому просторі.
+            {t.summary.desc}
           </p>
-          <div className="flex justify-center gap-6">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="w-3 h-3 rounded-full bg-accent-purple animate-ping" style={{ animationDelay: `${i * 0.2}s` }} />
-              ))}
-          </div>
         </motion.div>
       </div>
-      
-      {/* Background Glow */}
-      <motion.div 
-        style={{ y }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-accent-purple/5 rounded-full blur-[200px] -z-10" 
-      />
     </section>
   );
 };
 
-const Footer = () => {
+const Footer = ({ t }) => {
   return (
     <footer className="py-20 px-6 border-t border-slate-100">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
@@ -668,13 +831,13 @@ const Footer = () => {
         </div>
         
         <div className="flex gap-12 text-xs font-bold text-slate-400 uppercase tracking-widest">
-          <motion.a {...linkClickEffect} href="#" className="hover:text-accent-purple transition-colors">Концепція</motion.a>
-          <motion.a {...linkClickEffect} href="#" className="hover:text-accent-purple transition-colors">Архітектура</motion.a>
-          <motion.a {...linkClickEffect} href="#" className="hover:text-accent-purple transition-colors">Етика</motion.a>
+          {t.footer.links.map(link => (
+            <a key={link.id} href={`#${link.id}`} className="hover:text-accent-purple transition-colors">{link.label}</a>
+          ))}
         </div>
         
         <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          © 2026 BrainFlow Concept. Всі права захищені.
+          {t.footer.rights}
         </div>
       </div>
     </footer>
@@ -684,24 +847,26 @@ const Footer = () => {
 // --- Main App ---
 
 export default function App() {
+  const [lang, setLang] = useState('ua');
+  const t = translations[lang];
+
   return (
     <div className="relative min-h-screen selection:bg-accent-purple/20">
       <BackgroundEffects />
-      <Navbar />
+      <Navbar lang={lang} setLang={setLang} t={t} />
       
       <main>
-        <Hero />
-        
-        {/* Storytelling Flow */}
-        <ConceptSection />
-        <ArchitectureSection />
-        <ModulesSection />
-        <TimelineSection />
-        <RoadmapSection />
-        <SummarySection />
+        <Hero t={t} />
+        <ConceptSection t={t} />
+        <ArchitectureSection t={t} />
+        <ModulesSection t={t} />
+        <TimelineSection t={t} />
+        <RoadmapSection t={t} />
+        <EthicsSection t={t} />
+        <SummarySection t={t} />
       </main>
       
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 }
