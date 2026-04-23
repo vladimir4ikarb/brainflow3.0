@@ -41,83 +41,154 @@ import {
 // ANIMATED BACKGROUND SYSTEM (Ambient Blurred Shapes)
 // ============================================================================
 
-const FloatingOrb = ({ delay, duration, x, y, size, opacity }) => {
-  return (
-    <motion.div
-      initial={{ x, y, opacity: 0 }}
-      animate={{
-        x: [x, x + 100, x - 100, x],
-        y: [y, y - 150, y + 100, y],
-        opacity: [opacity, opacity * 0.6, opacity * 0.3, opacity]
-      }}
-      transition={{
-        delay,
-        duration,
-        repeat: Infinity,
-        ease: 'easeInOut'
-      }}
-      className="absolute rounded-full blur-[120px] mix-blend-multiply pointer-events-none"
-      style={{
-        width: size,
-        height: size,
-        filter: 'blur(100px)'
-      }}
-    />
-  );
-};
+// ============================================================================
+// DYNAMIC ANIMATED BACKGROUND (Moving Gradients + Parallax Orbs)
+// ============================================================================
 
-const BackgroundEffects = () => {
-  const orbs = [
-    { delay: 0, duration: 20, x: -100, y: 100, size: 400, opacity: 0.15, color: 'bg-purple-500' },
-    { delay: 5, duration: 25, x: 300, y: -200, size: 500, opacity: 0.12, color: 'bg-blue-400' },
-    { delay: 10, duration: 22, x: 600, y: 400, size: 350, opacity: 0.1, color: 'bg-purple-400' },
-    { delay: 2, duration: 28, x: -300, y: 600, size: 600, opacity: 0.08, color: 'bg-indigo-500' }
-  ];
-
+const AnimatedGradientBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#F7F5F2] via-[#FAFAF9] to-[#F3F1ED]" />
-      {orbs.map((orb, i) => (
-        <FloatingOrb key={i} {...orb} />
-      ))}
-      {/* Atmosphere glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
+    <div className="fixed inset-0 -z-50 overflow-hidden">
+      {/* Base color */}
+      <div className="absolute inset-0 bg-[#F7F5F2]" />
+
+      {/* Animated gradient layers */}
+      <motion.div
+        animate={{
+          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+        className="absolute inset-0"
         style={{
-          background:
-            'radial-gradient(circle at 20% 30%, rgba(124, 58, 237, 0.03) 0%, transparent 50%), ' +
-            'radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 50%)',
+          background: 'linear-gradient(-45deg, #F7F5F2 0%, #E8E5E0 25%, #FAFAF9 50%, #E8E5E0 75%, #F7F5F2 100%)',
+          backgroundSize: '400% 400%',
+        }}
+      />
+
+      {/* Purple glow (moving) */}
+      <motion.div
+        animate={{
+          x: [-200, 200, -200],
+          y: [-100, 100, -100],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+        className="absolute -top-1/2 -left-1/2 w-[600px] h-[600px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%)',
           filter: 'blur(80px)',
-          opacity: 0.8
+          mixBlendMode: 'multiply'
+        }}
+      />
+
+      {/* Blue glow (opposite direction) */}
+      <motion.div
+        animate={{
+          x: [200, -200, 200],
+          y: [100, -100, 100],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+        className="absolute -bottom-1/2 -right-1/2 w-[700px] h-[700px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%)',
+          filter: 'blur(100px)',
+          mixBlendMode: 'screen'
+        }}
+      />
+
+      {/* Accent glow (slower) */}
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.4, 0.6, 0.4]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+        className="absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(167, 139, 250, 0.05) 0%, transparent 70%)',
+          filter: 'blur(90px)',
+          mixBlendMode: 'overlay'
         }}
       />
     </div>
   );
 };
 
+const BackgroundEffects = () => {
+  return <AnimatedGradientBackground />;
+};
+
 // ============================================================================
 // LIQUID GLASS CARD (Premium Materiality)
 // ============================================================================
 
-const LiquidGlassCard = ({ children, className = '', delay = 0 }) => {
+const LiquidGlassCard = ({ children, className = '', delay = 0, parallaxY = 0 }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start']
+  });
+
+  // Parallax depth effect
+  const yTransform = useTransform(scrollYProgress, [0, 1], [parallaxY, -parallaxY * 0.5]);
+  const scaleEffect = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.9 }}
+      ref={ref}
+      initial={{ opacity: 0, y: 60, scale: 0.85 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-100px' }}
+      viewport={{ once: true, margin: '-80px' }}
+      style={{
+        y: yTransform,
+        scale: scaleEffect
+      }}
       transition={{
-        duration: 0.8,
+        duration: 0.9,
         delay,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
-      className={`relative group rounded-2xl overflow-hidden ${className}`}
+      className={`relative group rounded-2xl overflow-hidden backdrop-blur-[25px] transition-all duration-500 hover:shadow-2xl ${className}`}
+      whileHover={{
+        scale: 1.02,
+        transition: { duration: 0.3 }
+      }}
       style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
-        boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), 0 8px 32px rgba(31, 38, 135, 0.05)'
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.15) 100%)',
+        backdropFilter: 'blur(25px) saturate(180%)',
+        border: '1px solid rgba(255, 255, 255, 0.4)',
+        boxShadow: `
+          inset 0 0 30px rgba(255, 255, 255, 0.3),
+          inset -1px -1px 0 rgba(255, 255, 255, 0.2),
+          0 20px 60px rgba(0, 0, 0, 0.08),
+          0 0 40px rgba(124, 58, 237, 0.05)
+        `
       }}
     >
+      {/* Inner glow on hover */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.05) 0%, transparent 80%)',
+          mixBlendMode: 'overlay'
+        }}
+      />
       {children}
     </motion.div>
   );
@@ -392,8 +463,8 @@ const Navbar = ({ lang, setLang, t }) => {
 const Hero = ({ t }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [0, 800], [10, -10]), { stiffness: 100, damping: 30 });
-  const rotateY = useSpring(useTransform(mouseX, [0, 1200], [-10, 10]), { stiffness: 100, damping: 30 });
+  const rotateX = useSpring(useTransform(mouseY, [0, 800], [15, -15]), { stiffness: 80, damping: 25 });
+  const rotateY = useSpring(useTransform(mouseX, [0, 1200], [-15, 15]), { stiffness: 80, damping: 25 });
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -405,38 +476,66 @@ const Hero = ({ t }) => {
 
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden pt-32"
+      className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden pt-32 perspective"
       onMouseMove={handleMouseMove}
     >
-      {/* Floating accent orbs */}
-      <FloatingOrb delay={0} duration={15} x={-200} y={-200} size={500} opacity={0.08} />
-      <FloatingOrb delay={3} duration={20} x={800} y={100} size={600} opacity={0.06} />
+      {/* Dynamic background accent */}
+      <motion.div
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+        className="absolute -top-1/4 -left-1/4 w-[800px] h-[800px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%)',
+          filter: 'blur(100px)',
+          zIndex: 0
+        }}
+      />
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
         {/* Tag with Blur-Focus effect */}
         <motion.div
-          initial={{ opacity: 0, filter: 'blur(20px)' }}
-          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, filter: 'blur(20px)', y: -20 }}
+          animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="text-[10px] font-black text-purple-600 uppercase tracking-[0.4em] mb-8"
         >
           {t.hero.tag}
         </motion.div>
 
-        {/* Title with staggered letter animation + Blur-Focus */}
-        <div className="mb-8">
+        {/* Title with staggered letter animation + Blur-Focus + Shadow */}
+        <div className="mb-8 relative">
+          <motion.div
+            initial={{ opacity: 0, filter: 'blur(30px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="absolute inset-0 blur-3xl opacity-30 pointer-events-none"
+            style={{
+              background: 'linear-gradient(120deg, rgba(124, 58, 237, 0.3), rgba(59, 130, 246, 0.2))',
+              textShadow: '0 0 60px rgba(124, 58, 237, 0.3)'
+            }}
+          />
           {titleChars.map((char, i) => (
             <motion.span
               key={i}
-              initial={{ opacity: 0, filter: 'blur(20px)', y: 20 }}
+              initial={{ opacity: 0, filter: 'blur(25px)', y: 40 }}
               animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
               transition={{
-                duration: 0.6,
-                delay: 0.3 + i * 0.05,
+                duration: 0.7,
+                delay: 0.35 + i * 0.06,
                 ease: [0.25, 0.46, 0.45, 0.94]
               }}
               className="inline-block text-[5rem] md:text-[8rem] font-display font-bold tracking-tighter uppercase"
-              style={{ letterSpacing: '0.02em' }}
+              style={{
+                letterSpacing: '0.02em',
+                textShadow: '0 8px 30px rgba(124, 58, 237, 0.15), 0 4px 15px rgba(0, 0, 0, 0.05)'
+              }}
             >
               {char}
             </motion.span>
@@ -445,9 +544,9 @@ const Hero = ({ t }) => {
 
         {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, filter: 'blur(20px)', y: 20 }}
+          initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          transition={{ duration: 0.8, delay: 1 }}
           className="text-2xl md:text-3xl font-display font-semibold text-slate-700 mb-8 tracking-tight"
         >
           {t.hero.subtitle}
@@ -455,32 +554,30 @@ const Hero = ({ t }) => {
 
         {/* Description with Blur-Focus */}
         <motion.p
-          initial={{ opacity: 0, filter: 'blur(20px)', y: 20 }}
+          initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
           className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto mb-16 leading-relaxed font-medium"
         >
           {t.hero.desc}
         </motion.p>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator with glow */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex justify-center mt-20"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+          className="flex justify-center mt-20 relative"
         >
-          <ChevronDown className="w-6 h-6 text-slate-400" />
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+            className="absolute inset-0 flex justify-center pointer-events-none"
+          >
+            <div className="w-6 h-6 rounded-full bg-purple-600 blur-md opacity-40" />
+          </motion.div>
+          <ChevronDown className="w-6 h-6 text-slate-400 relative z-10" />
         </motion.div>
       </div>
-
-      {/* 3D perspective context (subtle) */}
-      <style>{`
-        @media (prefers-reduced-motion: no-preference) {
-          .hero-perspective {
-            perspective: 1000px;
-          }
-        }
-      `}</style>
     </section>
   );
 };
@@ -496,8 +593,14 @@ const ConceptSection = ({ t }) => {
     offset: ['start end', 'end start']
   });
 
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0.5]);
   const titleBlur = useTransform(scrollYProgress, [0, 0.3], [20, 0]);
+
+  const cards = [
+    { title: t.concept.reasonTitle, desc: t.concept.reasonDesc, icon: Brain, delay: 0, yOffset: 0 },
+    { title: t.concept.networkTitle, desc: t.concept.networkDesc, icon: Network, delay: 0.2, yOffset: 20 },
+    { title: t.concept.analytics, desc: t.concept.precision, icon: Cpu, delay: 0.4, yOffset: -20 }
+  ];
 
   return (
     <section id="концепція" ref={ref} className="py-40 px-6 relative overflow-hidden">
@@ -522,24 +625,35 @@ const ConceptSection = ({ t }) => {
           <p className="text-xl text-slate-500 font-medium max-w-2xl">{t.concept.desc}</p>
         </motion.div>
 
-        {/* Concept cards grid */}
+        {/* Concept cards grid with parallax */}
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { title: t.concept.reasonTitle, desc: t.concept.reasonDesc, icon: Brain, delay: 0 },
-            { title: t.concept.networkTitle, desc: t.concept.networkDesc, icon: Network, delay: 0.2 },
-            { title: t.concept.analytics, desc: t.concept.precision, icon: Cpu, delay: 0.4 }
-          ].map((card, i) => (
-            <LiquidGlassCard key={i} delay={card.delay} className="p-8 md:p-12">
-              <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-                <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center mb-6">
-                  <card.icon className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-display font-bold mb-4 text-slate-900 uppercase tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="text-slate-600 leading-relaxed font-medium">{card.desc}</p>
-              </motion.div>
-            </LiquidGlassCard>
+          {cards.map((card, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{
+                duration: 0.8,
+                delay: card.delay
+              }}
+              style={{
+                y: useTransform(scrollYProgress, [0.1, 0.7], [card.yOffset, -card.yOffset * 0.5])
+              }}
+              whileHover={{ scale: 1.05, y: -10 }}
+            >
+              <LiquidGlassCard className="p-8 md:p-12 h-full hover:shadow-2xl transition-shadow duration-300">
+                <motion.div whileHover={{ scale: 1.1 }}>
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-600/40 to-purple-400/20 flex items-center justify-center mb-6 group-hover:from-purple-600/60 transition-all duration-300 shadow-lg">
+                    <card.icon className="w-7 h-7 text-purple-600" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold mb-4 text-slate-900 uppercase tracking-tight group-hover:text-purple-600 transition-colors duration-300">
+                    {card.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed font-medium">{card.desc}</p>
+                </motion.div>
+              </LiquidGlassCard>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -562,18 +676,20 @@ const ArchitectureSection = ({ t }) => {
     title: layer,
     tag: t.arch.layersTags[i],
     icon: [Fingerprint, Database, Brain, Zap, Eye, Activity][i],
+    // Layered parallax: different depths for each layer
+    yOffset: useTransform(scrollYProgress, [0.2, 0.8], [80 + i * 20, -40 - i * 15]),
     scale: useTransform(scrollYProgress, [0.2, 0.8], [0.8, 1]),
-    y: useTransform(scrollYProgress, [0.2, 0.8], [100, 0])
+    rotate: useTransform(scrollYProgress, [0, 1], [i % 2 === 0 ? -2 : 2, 0])
   }));
 
   // Bento Grid asymmetric layout
   const bentoLayout = [
-    { gridCol: 'md:col-span-2 md:row-span-2', delay: 0 },
-    { gridCol: 'md:col-span-1 md:row-span-2', delay: 0.1 },
-    { gridCol: 'md:col-span-1', delay: 0.2 },
-    { gridCol: 'md:col-span-1', delay: 0.3 },
-    { gridCol: 'md:col-span-2', delay: 0.4 },
-    { gridCol: 'md:col-span-1', delay: 0.5 }
+    { gridCol: 'md:col-span-2 md:row-span-2', delay: 0, parallaxMultiplier: 1.2 },
+    { gridCol: 'md:col-span-1 md:row-span-2', delay: 0.1, parallaxMultiplier: 1 },
+    { gridCol: 'md:col-span-1', delay: 0.2, parallaxMultiplier: 0.8 },
+    { gridCol: 'md:col-span-1', delay: 0.3, parallaxMultiplier: 0.9 },
+    { gridCol: 'md:col-span-2', delay: 0.4, parallaxMultiplier: 1.1 },
+    { gridCol: 'md:col-span-1', delay: 0.5, parallaxMultiplier: 0.7 }
   ];
 
   return (
@@ -596,34 +712,47 @@ const ArchitectureSection = ({ t }) => {
           <p className="text-xl text-slate-500 font-medium">{t.arch.desc}</p>
         </motion.div>
 
-        {/* Bento Grid with falling depth */}
-        <div className="grid md:grid-cols-3 gap-6 auto-rows-[300px]">
+        {/* Bento Grid with parallax depth & shadows */}
+        <div className="grid md:grid-cols-3 gap-6 auto-rows-[300px] perspective">
           {layers.map((layer, i) => (
             <motion.div
               key={i}
               style={{
+                y: layer.yOffset,
                 scale: layer.scale,
-                y: layer.y
+                rotate: layer.rotate,
+                zIndex: i % 2 === 0 ? 10 - i : 5 - i
               }}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 80 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{
                 duration: 0.8,
-                delay: bentoLayout[i]?.delay || 0
+                delay: bentoLayout[i]?.delay || 0,
+                ease: [0.25, 0.46, 0.45, 0.94]
               }}
               className={`${bentoLayout[i]?.gridCol} col-span-1`}
             >
-              <LiquidGlassCard className={`p-8 h-full flex flex-col justify-between`}>
+              <LiquidGlassCard 
+                parallaxY={bentoLayout[i]?.parallaxMultiplier * 60}
+                className="p-8 h-full flex flex-col justify-between group hover:scale-105 transition-transform duration-300"
+              >
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center mb-6">
+                  <motion.div
+                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600/40 to-purple-400/20 flex items-center justify-center mb-6 group-hover:from-purple-600/60 group-hover:to-purple-400/40 transition-all duration-300 shadow-lg"
+                    whileHover={{ 
+                      scale: 1.15,
+                      rotate: 10,
+                      boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)'
+                    }}
+                  >
                     <layer.icon className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-display font-bold mb-2 text-slate-900 uppercase tracking-tight">
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-display font-bold mb-2 text-slate-900 uppercase tracking-tight group-hover:text-purple-600 transition-colors duration-300">
                     {layer.title}
                   </h3>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-purple-600/10 text-purple-600 text-[8px] font-black uppercase w-fit">
+                <div className="px-3 py-1 rounded-full bg-gradient-to-r from-purple-600/20 to-purple-400/10 text-purple-600 text-[8px] font-black uppercase w-fit border border-purple-400/30">
                   {layer.tag}
                 </div>
               </LiquidGlassCard>
@@ -662,23 +791,33 @@ const TypewriterText = ({ text, delay = 0 }) => {
 };
 
 const ModulesSection = ({ t }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start']
+  });
+
   const modules = t.modules.items.map((title, i) => ({
     title,
     tag: t.modules.itemsTags[i],
-    icon: [Brain, Zap, Network, Compass, Eye][i]
+    icon: [Brain, Zap, Network, Compass, Eye][i],
+    // 3D naiad: different layers move at different speeds
+    yOffset: useTransform(scrollYProgress, [0, 1], [100 + i * 30, -50 - i * 20]),
+    rotate: useTransform(scrollYProgress, [0, 1], [10, 0]),
+    scaleDepth: useTransform(scrollYProgress, [0.2, 0.6], [0.8, 1.05])
   }));
 
   // Bento Grid layout for modules
   const bentoLayout = [
-    { gridCol: 'md:col-span-2 md:row-span-2' },
-    { gridCol: 'md:col-span-1' },
-    { gridCol: 'md:col-span-1' },
-    { gridCol: 'md:col-span-2' },
-    { gridCol: 'md:col-span-1' }
+    { gridCol: 'md:col-span-2 md:row-span-2', delay: 0, zIndex: 30 },
+    { gridCol: 'md:col-span-1', delay: 0.1, zIndex: 25 },
+    { gridCol: 'md:col-span-1', delay: 0.2, zIndex: 20 },
+    { gridCol: 'md:col-span-2', delay: 0.3, zIndex: 15 },
+    { gridCol: 'md:col-span-1', delay: 0.4, zIndex: 10 }
   ];
 
   return (
-    <section id="модулі" className="py-40 px-6 relative overflow-hidden">
+    <section id="модулі" ref={ref} className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, x: -40 }}
@@ -697,34 +836,49 @@ const ModulesSection = ({ t }) => {
           <p className="text-xl text-slate-500 font-medium">{t.modules.desc}</p>
         </motion.div>
 
-        {/* Bento Grid for modules */}
-        <div className="grid md:grid-cols-3 gap-6 auto-rows-[280px]">
+        {/* Bento Grid with 3D naiad effect */}
+        <div className="grid md:grid-cols-3 gap-6 auto-rows-[280px] perspective">
           {modules.map((module, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-100px' }}
+              style={{
+                y: module.yOffset,
+                rotate: module.rotate,
+                scale: module.scaleDepth,
+                zIndex: bentoLayout[i]?.zIndex || 0
+              }}
+              initial={{ opacity: 0, scale: 0.75, y: 100 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
               transition={{
-                duration: 0.6,
-                delay: i * 0.1
+                duration: 0.8,
+                delay: bentoLayout[i]?.delay || 0,
+                ease: [0.25, 0.46, 0.45, 0.94]
               }}
               className={`${bentoLayout[i]?.gridCol} col-span-1`}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.05, y: -8 }}
             >
-              <LiquidGlassCard className="p-8 h-full flex flex-col justify-between group hover:bg-white/35 transition-colors duration-300">
+              <LiquidGlassCard 
+                parallaxY={50}
+                className="p-8 h-full flex flex-col justify-between group hover:shadow-2xl transition-shadow duration-300"
+              >
                 <div>
                   <motion.div
-                    className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center mb-6 group-hover:bg-purple-600/40 transition-colors duration-300"
-                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-600/50 to-purple-400/20 flex items-center justify-center mb-6 group-hover:from-purple-600/70 group-hover:to-purple-400/40 transition-all duration-300 shadow-xl"
+                    whileHover={{ 
+                      rotate: 360,
+                      scale: 1.2,
+                      boxShadow: '0 15px 40px rgba(124, 58, 237, 0.4)'
+                    }}
+                    transition={{ duration: 0.6 }}
                   >
-                    <module.icon className="w-6 h-6 text-purple-600" />
+                    <module.icon className="w-7 h-7 text-purple-600" />
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-display font-bold mb-2 text-slate-900 uppercase tracking-tight group-hover:text-purple-600 transition-colors duration-300">
                     <TypewriterText text={module.title} delay={i * 100} />
                   </h3>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-purple-600/10 text-purple-600 text-[8px] font-black uppercase w-fit">
+                <div className="px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600/25 to-purple-400/15 text-purple-600 text-[8px] font-black uppercase w-fit border border-purple-400/40 shadow-md">
                   {module.tag}
                 </div>
               </LiquidGlassCard>
